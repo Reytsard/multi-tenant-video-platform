@@ -1,6 +1,6 @@
 import { User } from 'src/user/entities/user.entity';
-import { Column, OneToOne, PrimaryColumn } from 'typeorm';
-
+import { Column, Entity, OneToOne, PrimaryColumn } from 'typeorm';
+@Entity()
 export class Comment {
   @PrimaryColumn()
   id: number;
