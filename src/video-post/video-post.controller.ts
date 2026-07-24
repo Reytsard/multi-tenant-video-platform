@@ -8,6 +8,9 @@ import {
   Delete,
   UseInterceptors,
   UploadedFile,
+  ParseFilePipe,
+  MaxFileSizeValidator,
+  FileTypeValidator,
 } from '@nestjs/common';
 import { VideoPostService } from './video-post.service';
 import { CreateVideoPostDto } from './dto/create-video-post.dto';
@@ -40,7 +43,17 @@ export class VideoPostController {
     }),
   )
   async upload(
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 1000 * 1024 * 1024 }),
+          new FileTypeValidator({
+            fileType: /(image\/jpeg|image\/png|application\/pdf)/,
+          }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
     @Body() uploadVideoDto: UploadVideoDto,
   ) {
     console.log(file);
