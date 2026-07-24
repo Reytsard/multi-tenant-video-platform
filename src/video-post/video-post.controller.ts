@@ -11,6 +11,7 @@ import {
   ParseFilePipe,
   MaxFileSizeValidator,
   FileTypeValidator,
+  BadRequestException,
 } from '@nestjs/common';
 import { VideoPostService } from './video-post.service';
 import { CreateVideoPostDto } from './dto/create-video-post.dto';
@@ -40,22 +41,41 @@ export class VideoPostController {
       limits: {
         fileSize: 1000 * 1024 * 1024,
       },
+      //use fileFilter for locally saving data
+      fileFilter: (req, file, cb) => {
+        const allowedMimeTypes = [
+          'video/mp4',
+          'image/png',
+          'image/jpeg',
+          'image/png',
+        ];
+
+        if (allowedMimeTypes.includes(file.mimetype)) {
+          cb(null, true);
+        } else {
+          cb(new BadRequestException('Invalid file type'), false);
+        }
+      },
     }),
   )
   async upload(
     @UploadedFile(
-      new ParseFilePipe({
-        validators: [
-          new MaxFileSizeValidator({ maxSize: 1000 * 1024 * 1024 }),
-          new FileTypeValidator({
-            fileType: /(image\/jpeg|image\/png|application\/pdf)/,
-          }),
-        ],
-      }),
+      // use parseFilePipe() for when saving it into the cloud, it validation pipes check the buffer memory
+      // new ParseFilePipe({
+      //   validators: [
+      //     new MaxFileSizeValidator({ maxSize: 1000 * 1024 * 1024 }),
+      //     new FileTypeValidator({
+      //       fileType: /(video\/mp4|image\/png|image\/jpg)/,
+      //     }),
+      //   ],
+      // }),
     )
     file: Express.Multer.File,
     @Body() uploadVideoDto: UploadVideoDto,
   ) {
+    if (!file) {
+      throw new BadRequestException('File is required');
+    }
     console.log(file);
     return 'Hello World';
     // return await this.videoPostService.upload()
