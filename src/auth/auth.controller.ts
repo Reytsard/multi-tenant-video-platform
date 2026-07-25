@@ -4,6 +4,7 @@ import {
   Controller,
   Post,
   Req,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -30,7 +31,13 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('/signin')
-  async signIn(@Req() req: { user: User }) {
-    return await this.authService.signIn(req.user);
+  async signIn(
+    @Req() req: { user: User },
+    @Res({ passthrough: true }) response: any,
+  ) {
+    const access_token = await this.authService.signIn(req.user);
+    response.cookie('access_token', access_token, { httpOnly: true });
+
+    return access_token;
   }
 }
