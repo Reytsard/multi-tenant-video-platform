@@ -12,6 +12,7 @@ import {
   MaxFileSizeValidator,
   FileTypeValidator,
   BadRequestException,
+  UseGuards,
 } from '@nestjs/common';
 import { VideoPostService } from './video-post.service';
 import { CreateVideoPostDto } from './dto/create-video-post.dto';
@@ -21,6 +22,7 @@ import { UploadVideoDto } from './dto/upload-video-post.dto';
 import { ApiConsumes } from '@nestjs/swagger';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('video-post')
 export class VideoPostController {
@@ -108,4 +110,7 @@ export class VideoPostController {
   remove(@Param('id') id: string) {
     return this.videoPostService.remove(+id);
   }
+
+  @Get('/latest')
+  async getLatestVideo() {}
 }

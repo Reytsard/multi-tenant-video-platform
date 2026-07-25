@@ -31,4 +31,6 @@ export class VideoPost {
 
   @OneToMany((type) => Comment, (comment) => comment.id)
   comments: Comment[];
+
+  datePosted: Date;
 }
