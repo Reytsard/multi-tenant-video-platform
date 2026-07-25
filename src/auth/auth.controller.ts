@@ -2,13 +2,14 @@ import {
   BadRequestException,
   Body,
   Controller,
-  HttpException,
-  HttpStatus,
   Post,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { SignUpDto } from './dto/SignUpDto';
+import { SignUpDto } from './dto/SignUpDto.dto';
+import { User } from 'src/user/entities/user.entity';
+import { LocalAuthGuard } from './local-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -25,5 +26,11 @@ export class AuthController {
       );
     }
     return this.authService.signUp(signUpDto);
+  }
+
+  @UseGuards(LocalAuthGuard)
+  @Post('/signin')
+  async signIn(@Req() req: { user: User }) {
+    return req.user;
   }
 }
