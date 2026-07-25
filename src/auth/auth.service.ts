@@ -7,19 +7,32 @@ import { UserService } from 'src/user/user.service';
 import { SignUpDto } from './dto/SignUpDto.dto';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
+import { JwtService } from '@nestjs/jwt';
+import { SignInDto } from './dto/SignInDto.dto';
+import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class AuthService {
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private jwtService: JwtService,
+  ) {}
   async validateUser(email: string, password: string) {
     const user = await this.userService.findByEmail(email);
     if (!user) {
       throw new BadRequestException('Email is not registered');
     }
-    if (await bcrypt.compare(password, user.password)) {
-      return user;
+    if (!(await bcrypt.compare(password, user.password))) {
+      throw new BadRequestException();
     }
-    throw new BadRequestException();
+    return user;
+  }
+
+  async signIn(user: User) {
+    const payload = { sub: user.id, username: user.username }; //add role if there is a role
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+    };
   }
 
   async signUp(signUpDto: SignUpDto) {

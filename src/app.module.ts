@@ -9,9 +9,14 @@ import { User } from './user/entities/user.entity';
 import { VideoPost } from './video-post/entities/video-post.entity';
 import { Comment } from './comment/entities/comment.entity';
 import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: 'localhost',
@@ -21,6 +26,13 @@ import { AuthModule } from './auth/auth.module';
       password: 'TEST123',
       synchronize: true,
       entities: [User, VideoPost, Comment],
+    }),
+    JwtModule.register({
+      global: true,
+      secret: 'randomSecretifkherigfhreiurgh',
+      signOptions: {
+        expiresIn: '5m',
+      },
     }),
     AuthModule,
     UserModule,
