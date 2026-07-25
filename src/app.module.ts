@@ -8,6 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user/entities/user.entity';
 import { VideoPost } from './video-post/entities/video-post.entity';
 import { Comment } from './comment/entities/comment.entity';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { Comment } from './comment/entities/comment.entity';
       synchronize: true,
       entities: [User, VideoPost, Comment],
     }),
+    AuthModule,
     UserModule,
     VideoPostModule,
     CommentModule,
