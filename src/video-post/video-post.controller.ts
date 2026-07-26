@@ -13,6 +13,7 @@ import {
   FileTypeValidator,
   BadRequestException,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { VideoPostService } from './video-post.service';
 import { CreateVideoPostDto } from './dto/create-video-post.dto';
@@ -23,11 +24,13 @@ import { ApiConsumes } from '@nestjs/swagger';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { type Request } from 'express';
 
 @Controller('video-post')
 export class VideoPostController {
   constructor(private readonly videoPostService: VideoPostService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post('/upload')
   @ApiConsumes('multifile/form-data')
   @UseInterceptors(
@@ -74,13 +77,18 @@ export class VideoPostController {
     )
     file: Express.Multer.File,
     @Body() uploadVideoDto: UploadVideoDto,
+    @Req() req: Request,
   ) {
     if (!file) {
       throw new BadRequestException('File is required');
     }
     console.log(file);
     return 'Hello World';
-    // return await this.videoPostService.upload()
+    return await this.videoPostService.upload(
+      file,
+      uploadVideoDto,
+      req.cookies['access_token'],
+    );
   }
 
   @Post()

@@ -35,9 +35,9 @@ export class AuthController {
     @Req() req: { user: User },
     @Res({ passthrough: true }) response: any,
   ) {
-    const access_token = await this.authService.signIn(req.user);
-    response.cookie('access_token', access_token, { httpOnly: true });
+    const token = await this.authService.signIn(req.user);
+    response.cookie('token', token.access_token, { httpOnly: true });
 
-    return access_token;
+    return token;
   }
 }
