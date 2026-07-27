@@ -16,7 +16,7 @@ export class AuthService {
     private userService: UserService,
     private jwtService: JwtService,
   ) {}
-  
+
   async validateUser(email: string, password: string) {
     const user = await this.userService.findByEmail(email);
     if (!user) {
@@ -35,7 +35,7 @@ export class AuthService {
 
   async getRefreshToken(user: User) {
     const payload = { sub: user.id, username: user.username }; //add role if there is a role
-    return await this.jwtService.signAsync(payload);
+    return await this.jwtService.signAsync(payload, { expiresIn: '7d' });
   }
 
   async signUp(signUpDto: SignUpDto) {

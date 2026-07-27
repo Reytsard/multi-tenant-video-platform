@@ -37,6 +37,12 @@ export class VideoPostController {
     schema: {
       type: 'object',
       properties: {
+        title: {
+          type: 'string',
+        },
+        description: {
+          type: 'string',
+        },
         file: {
           // This key must match the string inside FileInterceptor
           type: 'string',
