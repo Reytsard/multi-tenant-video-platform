@@ -28,14 +28,16 @@ export class AuthService {
     return user;
   }
 
-  async signIn(user: User) {
+  async getAccessToken(user: User) {
     const payload = { sub: user.id, username: user.username }; //add role if there is a role
     return {
       access_token: await this.jwtService.signAsync(payload),
-      refresh_token: await this.jwtService.signAsync(payload, {
-        expiresIn: '7d',
-      }),
     };
+  }
+
+  async getRefreshToken(user: User) {
+    const payload = { sub: user.id, username: user.username }; //add role if there is a role
+    return await this.jwtService.signAsync(payload);
   }
 
   async signUp(signUpDto: SignUpDto) {
