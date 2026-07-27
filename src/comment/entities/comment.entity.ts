@@ -1,13 +1,24 @@
 import { User } from 'src/user/entities/user.entity';
-import { Column, Entity, OneToOne, PrimaryColumn } from 'typeorm';
+import { VideoPost } from 'src/video-post/entities/video-post.entity';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToOne,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 @Entity()
 export class Comment {
-  @PrimaryColumn()
-  id: number;
+  @PrimaryGeneratedColumn()
+  id?: number;
 
   @Column()
   comment: string;
 
-  @OneToOne((type) => User, (user) => user.id)
+  @ManyToOne((_) => User, (user) => user.id)
   ownerId: User;
+
+  @ManyToOne((_) => VideoPost, (video) => video.comments)
+  videoId: VideoPost;
 }

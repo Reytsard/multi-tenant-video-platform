@@ -19,12 +19,11 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Req() payload: Request, @Body() createCommentDto: CreateCommentDto) {
+  create(@Req() payload, @Body() createCommentDto: CreateCommentDto) {
     // const userId =
-    console.log('newthings');
-    console.log(payload);
-    return this.commentService.create(createCommentDto);
+    return this.commentService.create(createCommentDto, payload.user.userId);
   }
 
   @Get()

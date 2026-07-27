@@ -23,7 +23,7 @@ export class VideoPost {
   @Column()
   description: string;
 
-  @OneToMany((type) => Comment, (comment) => comment.id)
+  @OneToMany((_) => Comment, (comment) => comment.videoId)
   comments?: Comment[];
 
   @Column()

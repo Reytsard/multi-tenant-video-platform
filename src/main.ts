@@ -16,7 +16,7 @@ async function bootstrap() {
       'A backend where users can upload and other people can see the video',
     )
     .setVersion('1.0')
-    .addTag('cats')
+    .addBearerAuth()
     .build();
 
   const documentFactory = () => SwaggerModule.createDocument(app, config);

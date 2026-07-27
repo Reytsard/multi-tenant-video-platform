@@ -13,6 +13,7 @@ import { SignUpDto } from './dto/SignUpDto.dto';
 import { User } from 'src/user/entities/user.entity';
 import { LocalAuthGuard } from './local-auth.guard';
 import { RefreshAuthGuard } from './refresh-auth.guard';
+import { SignInDto } from './dto/SignInDto.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -34,6 +35,7 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('/signin')
   async signIn(
+    @Body() _signInDto: SignInDto,
     @Req() req: { user: User },
     @Res({ passthrough: true }) response: any,
   ) {

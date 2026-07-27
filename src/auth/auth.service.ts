@@ -8,7 +8,6 @@ import { SignUpDto } from './dto/SignUpDto.dto';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { JwtService } from '@nestjs/jwt';
-import { SignInDto } from './dto/SignInDto.dto';
 import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
@@ -17,6 +16,7 @@ export class AuthService {
     private userService: UserService,
     private jwtService: JwtService,
   ) {}
+  
   async validateUser(email: string, password: string) {
     const user = await this.userService.findByEmail(email);
     if (!user) {

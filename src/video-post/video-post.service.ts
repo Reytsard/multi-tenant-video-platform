@@ -27,12 +27,15 @@ export class VideoPostService {
     return 'This action adds a new videoPost';
   }
 
-  findAll() {
-    return `This action returns all videoPost`;
+  async findAll() {
+    return await this.videoRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} videoPost`;
+  async findOne(id: number) {
+    return await this.videoRepository.find({
+      where: { id },
+      relations: { comments: true },
+    });
   }
 
   update(id: number, updateVideoPostDto: UpdateVideoPostDto) {
