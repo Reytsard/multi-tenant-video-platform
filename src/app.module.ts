@@ -12,6 +12,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -39,6 +40,23 @@ import { PassportModule } from '@nestjs/passport';
     UserModule,
     VideoPostModule,
     CommentModule,
+    ThrottlerModule.forRoot([
+      {
+        name: 'short',
+        ttl: 1000,
+        limit: 3,
+      },
+      {
+        name: 'med',
+        ttl: 10000,
+        limit: 25,
+      },
+      {
+        name: 'long',
+        ttl: 60000,
+        limit: 50,
+      },
+    ]),
   ],
   controllers: [AppController],
   providers: [AppService],
