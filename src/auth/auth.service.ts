@@ -32,6 +32,9 @@ export class AuthService {
     const payload = { sub: user.id, username: user.username }; //add role if there is a role
     return {
       access_token: await this.jwtService.signAsync(payload),
+      refresh_token: await this.jwtService.signAsync(payload, {
+        expiresIn: '7d',
+      }),
     };
   }
 
