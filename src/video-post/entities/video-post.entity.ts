@@ -12,7 +12,7 @@ import {
 @Entity()
 export class VideoPost {
   @PrimaryGeneratedColumn()
-  id: number;
+  id?: number;
 
   @ManyToOne((type) => User, (user) => user.id)
   ownerId: number;
@@ -23,14 +23,21 @@ export class VideoPost {
   @Column()
   description: string;
 
-  @Column()
-  likes: number;
-
-  @Column()
-  dislikes: number;
-
   @OneToMany((type) => Comment, (comment) => comment.id)
-  comments: Comment[];
+  comments?: Comment[];
 
+  @Column()
   datePosted: Date;
+
+  @Column()
+  videoPath: string;
+
+  @Column({ default: 0 })
+  likes?: number;
+
+  @Column({ default: 0 })
+  dislikes?: number;
+
+  @Column({ default: 0 })
+  views?: number;
 }

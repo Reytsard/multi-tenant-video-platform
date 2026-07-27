@@ -11,8 +11,6 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
   }
 
   async validate(payload: any) {
-    console.log('payload');
-    console.log(payload);
     return payload;
   }
 }

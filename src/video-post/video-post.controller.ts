@@ -82,13 +82,8 @@ export class VideoPostController {
     if (!file) {
       throw new BadRequestException('File is required');
     }
-    console.log(file);
-    return 'Hello World';
-    return await this.videoPostService.upload(
-      file,
-      uploadVideoDto,
-      req.cookies['access_token'],
-    );
+    //todo: add userId here and set it has the ownerId for the video
+    return await this.videoPostService.upload(file, uploadVideoDto, req.user);
   }
 
   @Post()

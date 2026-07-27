@@ -4,15 +4,23 @@ import { UpdateVideoPostDto } from './dto/update-video-post.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { VideoPost } from './entities/video-post.entity';
 import { Repository } from 'typeorm';
+import { UploadVideoDto } from './dto/upload-video-post.dto';
 
 @Injectable()
 export class VideoPostService {
   constructor(
-    @InjectRepository(VideoPost) videoRepository: Repository<VideoPost>,
+    @InjectRepository(VideoPost) private videoRepository: Repository<VideoPost>,
   ) {}
 
-  async upload(file, uploadVideoDto, access_token) {
-    console.log(access_token);
+  async upload(file, uploadVideoDto: UploadVideoDto, user) {
+    const dataToSave: VideoPost = {
+      title: uploadVideoDto.title,
+      description: uploadVideoDto.description,
+      ownerId: user.sub,
+      videoPath: file.path,
+      datePosted: new Date(),
+    };
+    return await this.videoRepository.save(dataToSave);
   }
 
   create(createVideoPostDto: CreateVideoPostDto) {
