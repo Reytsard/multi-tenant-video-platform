@@ -20,12 +20,13 @@ import { CreateVideoPostDto } from './dto/create-video-post.dto';
 import { UpdateVideoPostDto } from './dto/update-video-post.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadVideoDto } from './dto/upload-video-post.dto';
-import { ApiBody, ApiConsumes } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes } from '@nestjs/swagger';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { type Request } from 'express';
 
+@ApiBearerAuth()
 @Controller('video-post')
 export class VideoPostController {
   constructor(private readonly videoPostService: VideoPostService) {}
@@ -97,6 +98,7 @@ export class VideoPostController {
     @Body() uploadVideoDto: UploadVideoDto,
     @Req() req: Request,
   ) {
+    console.log('reached data');
     if (!file) {
       throw new BadRequestException('File is required');
     }

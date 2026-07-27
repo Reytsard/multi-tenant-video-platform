@@ -16,8 +16,9 @@ async function bootstrap() {
       'A backend where users can upload and other people can see the video',
     )
     .setVersion('1.0')
-    .addBearerAuth()
-    .addCookieAuth()
+    .addBearerAuth({
+      type: 'http',
+    })
     .build();
 
   const documentFactory = () => SwaggerModule.createDocument(app, config);

@@ -13,7 +13,9 @@ import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
+@ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller('comment')
 export class CommentController {
@@ -21,9 +23,9 @@ export class CommentController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Req() payload, @Body() createCommentDto: CreateCommentDto) {
+  create(@Req() payload: any, @Body() createCommentDto: CreateCommentDto) {
     // const userId =
-    return this.commentService.create(createCommentDto, payload.user.userId);
+    return this.commentService.create(createCommentDto, payload.user.sub);
   }
 
   @Get()

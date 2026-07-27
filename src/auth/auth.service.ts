@@ -53,7 +53,6 @@ export class AuthService {
       username: signUpDto.username,
       password: hashedPassword,
     };
-    console.log(userData);
     const savedData = await this.userService.create(userData);
     return {
       email: savedData.email,
