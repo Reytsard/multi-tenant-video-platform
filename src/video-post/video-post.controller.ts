@@ -20,7 +20,7 @@ import { CreateVideoPostDto } from './dto/create-video-post.dto';
 import { UpdateVideoPostDto } from './dto/update-video-post.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadVideoDto } from './dto/upload-video-post.dto';
-import { ApiConsumes } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes } from '@nestjs/swagger';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
@@ -32,7 +32,19 @@ export class VideoPostController {
 
   @UseGuards(JwtAuthGuard)
   @Post('/upload')
-  @ApiConsumes('multifile/form-data')
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          // This key must match the string inside FileInterceptor
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
