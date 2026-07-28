@@ -27,11 +27,11 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { type Request } from 'express';
 
 @ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('video-post')
 export class VideoPostController {
   constructor(private readonly videoPostService: VideoPostService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Post('/upload')
   @ApiConsumes('multipart/form-data')
   @ApiBody({
@@ -98,7 +98,6 @@ export class VideoPostController {
     @Body() uploadVideoDto: UploadVideoDto,
     @Req() req: Request,
   ) {
-    console.log('reached data');
     if (!file) {
       throw new BadRequestException('File is required');
     }
@@ -116,8 +115,8 @@ export class VideoPostController {
     return this.videoPostService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
+  @Get(':id/stream')
+  async findOne(@Param('id') id: string) {
     return this.videoPostService.findOne(+id);
   }
 
@@ -130,7 +129,7 @@ export class VideoPostController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string) {
     return this.videoPostService.remove(+id);
   }
 
