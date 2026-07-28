@@ -69,9 +69,12 @@ export class VideoPostController {
       fileFilter: (req, file, cb) => {
         const allowedMimeTypes = [
           'video/mp4',
-          'image/png',
-          'image/jpeg',
-          'image/png',
+          'video/mpeg',
+          'video/quicktime',
+          'video/x-msvideo',
+          // 'image/png',
+          // 'image/jpeg',
+          // 'image/png',
         ];
 
         if (allowedMimeTypes.includes(file.mimetype)) {
