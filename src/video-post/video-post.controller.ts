@@ -14,6 +14,9 @@ import {
   BadRequestException,
   UseGuards,
   Req,
+  ParseFilePipe,
+  MaxFileSizeValidator,
+  FileTypeValidator,
 } from '@nestjs/common';
 import { VideoPostService } from './video-post.service';
 import { CreateVideoPostDto } from './dto/create-video-post.dto';
@@ -48,6 +51,10 @@ export class VideoPostController {
           // This key must match the string inside FileInterceptor
           type: 'string',
           format: 'binary',
+        },
+        visibility: {
+          type: 'string',
+          enum: ['public', 'private', 'unlisted'],
         },
       },
     },
@@ -88,14 +95,19 @@ export class VideoPostController {
   async upload(
     @UploadedFile(
       // use parseFilePipe() for when saving it into the cloud, it validation pipes check the buffer memory
-      // new ParseFilePipe({
-      //   validators: [
-      //     new MaxFileSizeValidator({ maxSize: 1000 * 1024 * 1024 }),
-      //     new FileTypeValidator({
-      //       fileType: /(video\/mp4|image\/png|image\/jpg)/,
-      //     }),
-      //   ],
-      // }),
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 1000 * 1024 * 1024 }),
+          // new FileTypeValidator({
+          //   fileType:
+          //     /(video\/mp4\|video\/mpeg|video\/quicktime|video\/x-msvideo)/,
+          // }),
+        ],
+
+        /**
+         *  'video/mpeg', 'video/quicktime', 'video/x-msvideo'
+         */
+      }),
     )
     file: Express.Multer.File,
     @Body() uploadVideoDto: UploadVideoDto,

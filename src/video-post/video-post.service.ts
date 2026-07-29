@@ -21,6 +21,7 @@ export class VideoPostService {
       ownerId: user.sub,
       videoPath: file.path,
       datePosted: new Date(),
+      visiblity: uploadVideoDto.visibility
     };
     return await this.videoRepository.save(dataToSave);
   }

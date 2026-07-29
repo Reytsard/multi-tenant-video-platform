@@ -9,4 +9,7 @@ export class UploadVideoDto {
 
   @ApiProperty()
   videoFile: Express.Multer.File;
+
+  @ApiProperty({ enum: ['public', 'private', 'unlisted'] })
+  visibility: 'public' | 'private' | 'unlisted';
 }

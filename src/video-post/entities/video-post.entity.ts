@@ -3,7 +3,6 @@ import { User } from 'src/user/entities/user.entity';
 import {
   Column,
   Entity,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -21,9 +20,9 @@ export class VideoPost {
   title: string;
 
   @Column()
-  description: string;
+  description?: string;
 
-  @OneToMany((_) => Comment, (comment) => comment.videoId)
+  @OneToMany((_) => Comment, (video) => video.videoId)
   comments?: Comment[];
 
   @Column()
@@ -40,4 +39,7 @@ export class VideoPost {
 
   @Column({ default: 0 })
   views?: number;
+
+  @Column({ default: 'public' })
+  visiblity?: 'public' | 'private' | 'unlisted';
 }
