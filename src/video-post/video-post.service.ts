@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, StreamableFile } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  StreamableFile,
+} from '@nestjs/common';
 import { CreateVideoPostDto } from './dto/create-video-post.dto';
 import { UpdateVideoPostDto } from './dto/update-video-post.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -7,6 +12,7 @@ import { Repository } from 'typeorm';
 import { UploadVideoDto } from './dto/upload-video-post.dto';
 import { join } from 'path';
 import { createReadStream } from 'fs';
+import { unlink } from 'fs/promises';
 
 @Injectable()
 export class VideoPostService {
@@ -15,14 +21,16 @@ export class VideoPostService {
   ) {}
 
   async upload(file, uploadVideoDto: UploadVideoDto, user) {
+    console.log('upload user', user);
     const dataToSave: VideoPost = {
       title: uploadVideoDto.title,
       description: uploadVideoDto.description,
       ownerId: user.sub,
       videoPath: file.path,
       datePosted: new Date(),
-      visiblity: uploadVideoDto.visibility
+      visiblity: uploadVideoDto.visibility,
     };
+    console.log(dataToSave);
     return await this.videoRepository.save(dataToSave);
   }
 
@@ -56,7 +64,25 @@ export class VideoPostService {
     return `This action updates a #${id} videoPost`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} videoPost`;
+  async remove(userId: number, id: number) {
+    const video = await this.videoRepository.findOne({
+      where: { id },
+      relations: { ownerId: true },
+    });
+    console.log(video);
+    if (!video) {
+      throw new NotFoundException('video not found');
+    }
+    if (video.ownerId !== userId) {
+      throw new BadRequestException('video not found');
+    }
+
+    try {
+      const videoPath = join(process.cwd(), video.videoPath);
+      await unlink(videoPath);
+      return await this.videoRepository.delete(video);
+    } catch (e) {
+      throw new BadRequestException('Error deleting video');
+    }
   }
 }

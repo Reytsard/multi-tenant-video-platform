@@ -111,7 +111,7 @@ export class VideoPostController {
     )
     file: Express.Multer.File,
     @Body() uploadVideoDto: UploadVideoDto,
-    @Req() req: Request,
+    @Req() req,
   ) {
     if (!file) {
       throw new BadRequestException('File is required');
@@ -144,8 +144,8 @@ export class VideoPostController {
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string) {
-    return this.videoPostService.remove(+id);
+  async remove(@Req() req, @Param('id') id: string) {
+    return this.videoPostService.remove(req.user.sub, +id);
   }
 
   @Get('/latest')

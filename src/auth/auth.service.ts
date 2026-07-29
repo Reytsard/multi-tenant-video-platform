@@ -28,8 +28,9 @@ export class AuthService {
     return user;
   }
 
-  async getAccessToken(user: User) {
-    const payload = { sub: user.id, username: user.username }; //add role if there is a role
+  async getAccessToken(user) {
+    console.log('user', user);
+    const payload = { sub: user.sub, username: user.username }; //add role if there is a role
     return await this.jwtService.signAsync(payload);
   }
 

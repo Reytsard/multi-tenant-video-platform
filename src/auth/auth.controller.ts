@@ -48,6 +48,6 @@ export class AuthController {
   @UseGuards(RefreshAuthGuard)
   @Get('/refresh')
   async refreshToken(@Req() req) {
-    return await this.authService.getAccessToken(req.user);
+    return { access_token: await this.authService.getAccessToken(req.user) };
   }
 }
