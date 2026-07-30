@@ -39,6 +39,7 @@ export class AuthController {
     @Req() req: { user: User },
     @Res({ passthrough: true }) response: any,
   ) {
+    console.log('signin', req.user);
     const accessToken = await this.authService.getAccessToken(req.user);
     const refreshToken = await this.authService.getRefreshToken(req.user);
     response.cookie('token', refreshToken, { httpOnly: true });
@@ -48,6 +49,8 @@ export class AuthController {
   @UseGuards(RefreshAuthGuard)
   @Get('/refresh')
   async refreshToken(@Req() req) {
-    return { access_token: await this.authService.getAccessToken(req.user) };
+    return {
+      access_token: await this.authService.getRefreshedAccessToken(req.user),
+    };
   }
 }

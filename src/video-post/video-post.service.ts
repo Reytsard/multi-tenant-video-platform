@@ -13,19 +13,26 @@ import { UploadVideoDto } from './dto/upload-video-post.dto';
 import { join } from 'path';
 import { createReadStream } from 'fs';
 import { unlink } from 'fs/promises';
+import { UserService } from 'src/user/user.service';
+import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class VideoPostService {
   constructor(
     @InjectRepository(VideoPost) private videoRepository: Repository<VideoPost>,
+    private userService: UserService,
   ) {}
 
   async upload(file, uploadVideoDto: UploadVideoDto, user) {
-    console.log('upload user', user);
+    const owner = await this.userService.findById(user.sub);
+    if (!owner) {
+      throw new NotFoundException('No User Found');
+    }
+
     const dataToSave: VideoPost = {
       title: uploadVideoDto.title,
       description: uploadVideoDto.description,
-      ownerId: user.sub,
+      owner: { id: user.sub } as User,
       videoPath: file.path,
       datePosted: new Date(),
       visiblity: uploadVideoDto.visibility,
@@ -67,13 +74,12 @@ export class VideoPostService {
   async remove(userId: number, id: number) {
     const video = await this.videoRepository.findOne({
       where: { id },
-      relations: { ownerId: true },
     });
     console.log(video);
     if (!video) {
       throw new NotFoundException('video not found');
     }
-    if (video.ownerId !== userId) {
+    if (video.owner.id !== userId) {
       throw new BadRequestException('video not found');
     }
 

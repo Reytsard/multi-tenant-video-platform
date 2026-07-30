@@ -13,8 +13,8 @@ export class VideoPost {
   @PrimaryGeneratedColumn()
   id?: number;
 
-  @ManyToOne((type) => User, (user) => user.id)
-  ownerId: number;
+  @ManyToOne((type) => User, (user) => user.videos)
+  owner: User;
 
   @Column()
   title: string;

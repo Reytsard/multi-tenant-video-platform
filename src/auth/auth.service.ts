@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import { SignUpDto } from './dto/SignUpDto.dto';
 import * as bcrypt from 'bcrypt';
@@ -28,9 +24,13 @@ export class AuthService {
     return user;
   }
 
-  async getAccessToken(user) {
-    console.log('user', user);
-    const payload = { sub: user.sub, username: user.username }; //add role if there is a role
+  async getAccessToken(user: User) {
+    const payload = { sub: user.id, username: user.username }; //add role if there is a role
+    return await this.jwtService.signAsync(payload);
+  }
+
+  async getRefreshedAccessToken(user: { sub: number; username: string }) {
+    const payload = { sub: user.sub, username: user.username };
     return await this.jwtService.signAsync(payload);
   }
 
