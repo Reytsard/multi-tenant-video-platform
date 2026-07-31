@@ -35,8 +35,15 @@ export class UserService {
     return `This action returns a #${id} user`;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    const user = await this.userRepository.findOneBy({id});
+    if(!user) throw new NotFoundException("User not found");
+    if( await this.userRepository.isExistBy({updateUserDto.username}) && updateUserDto.username !== user.username)) throw new BadRequestException("username already in use");
+    user = {
+            ...user,
+            username = updateUserDto.username,
+            };
+    return await this.userRepository.save(user);// `This action updates a #${id} user`;
   }
 
   remove(id: number) {
