@@ -38,11 +38,18 @@ export class UserService {
   async update(id: number, updateUserDto: UpdateUserDto) {
     const user = await this.userRepository.findOneBy({id});
     if(!user) throw new NotFoundException("User not found");
-    if( await this.userRepository.isExistBy({updateUserDto.username}) && updateUserDto.username !== user.username)) throw new BadRequestException("username already in use");
+    if( await this.userRepository.existsBy({updateUserDto.username}) && updateUserDto.username !== user.username)) throw new BadRequestException("username already in use");
+    
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(updateUserDto.password, salt);
+
     user = {
             ...user,
             username = updateUserDto.username,
+             email = user.email,
+            password = hashedPassword,
             };
+
     return await this.userRepository.save(user);// `This action updates a #${id} user`;
   }
 
