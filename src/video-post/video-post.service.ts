@@ -74,6 +74,7 @@ export class VideoPostService {
   async remove(userId: number, id: number) {
     const video = await this.videoRepository.findOne({
       where: { id },
+      relations: { owner: true },
     });
     console.log(video);
     if (!video) {

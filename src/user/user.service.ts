@@ -1,9 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -36,21 +41,29 @@ export class UserService {
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
-    const user = await this.userRepository.findOneBy({id});
-    if(!user) throw new NotFoundException("User not found");
-    if( await this.userRepository.existsBy({updateUserDto.username}) && updateUserDto.username !== user.username)) throw new BadRequestException("username already in use");
-    
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(updateUserDto.password, salt);
+    const user = await this.userRepository.findOneBy({ id });
+    if (!user) throw new NotFoundException('User not found');
+    const usernameExists = await this.userRepository.existsBy({
+      username: updateUserDto.username,
+    });
+    if (usernameExists && updateUserDto.username !== user.username) {
+      throw new BadRequestException('username already in use');
+    }
 
-    user = {
-            ...user,
-            username = updateUserDto.username,
-             email = user.email,
-            password = hashedPassword,
-            };
+    const newUserDetails = {
+      ...user,
+      username: updateUserDto.username,
+      email: user.email,
+    };
 
-    return await this.userRepository.save(user);// `This action updates a #${id} user`;
+    if (updateUserDto.password) {
+      const salt = await bcrypt.genSalt();
+      const hashedPassword = await bcrypt.hash(updateUserDto.password, salt);
+
+      newUserDetails.password = hashedPassword;
+    }
+
+    return await this.userRepository.save(user); // `This action updates a #${id} user`;
   }
 
   remove(id: number) {

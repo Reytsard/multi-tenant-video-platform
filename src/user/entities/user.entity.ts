@@ -17,6 +17,6 @@ export class User {
   @Column()
   password: string;
 
-  @OneToMany((type) => VideoPost, (vp) => vp.id, { nullable: true })
+  @OneToMany((type) => VideoPost, (vp) => vp.owner, { nullable: true })
   videos: VideoPost[];
 }
