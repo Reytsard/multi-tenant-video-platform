@@ -66,7 +66,7 @@ export class UserService {
     return await this.userRepository.save(user); // `This action updates a #${id} user`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: number) {
+    return await this.userRepository.delete({ id });
   }
 }
