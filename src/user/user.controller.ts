@@ -9,6 +9,9 @@ import {
   UsePipes,
   ValidationPipe,
   UseGuards,
+  Req,
+  NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -40,7 +43,14 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  update(
+    @Req() req,
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    if (req.user.sub != id) {
+      throw new BadRequestException();
+    }
     return this.userService.update(+id, updateUserDto);
   }
 
