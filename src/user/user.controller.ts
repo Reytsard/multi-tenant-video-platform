@@ -43,12 +43,12 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  update(
+  async update(
     @Req() req,
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    if (req.user.sub != id) {
+    if (req.user.sub !== id) {
       throw new BadRequestException();
     }
     return this.userService.update(+id, updateUserDto);
