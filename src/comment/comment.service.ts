@@ -6,11 +6,13 @@ import { Repository } from 'typeorm';
 import { Comment } from './entities/comment.entity';
 import { User } from 'src/user/entities/user.entity';
 import { VideoPost } from 'src/video-post/entities/video-post.entity';
+import { VideoPostService } from 'src/video-post/video-post.service';
 
 @Injectable()
 export class CommentService {
   constructor(
     @InjectRepository(Comment) private commentRepository: Repository<Comment>,
+    private videoPostService: VideoPostService
   ) {}
 
   async create(createCommentDto: CreateCommentDto, userId: number) {
@@ -20,6 +22,11 @@ export class CommentService {
       videoId: { id: createCommentDto.videoId } as VideoPost,
     };
     return await this.commentRepository.save(commentToSave);
+  }
+
+  async findAllCommentsByVideoId(videoId: number) {
+    const videoPost = this.videoPostService.findById(videoId);
+    return await this.commentRepository.findBy(videoPost);
   }
 
   findAll() {

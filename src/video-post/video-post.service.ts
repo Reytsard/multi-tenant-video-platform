@@ -45,6 +45,10 @@ export class VideoPostService {
     return 'This action adds a new videoPost';
   }
 
+  async findById(videoId: number) {
+    return this.videoRepository.findBy({ id: videoId });
+  }
+
   async findAll() {
     return await this.videoRepository.find();
   }

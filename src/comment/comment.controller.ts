@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Req,
+  BadRequestException,
 } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
@@ -23,14 +24,25 @@ export class CommentController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Req() payload: any, @Body() createCommentDto: CreateCommentDto) {
+  async create(
+    @Req() payload: any,
+    @Body() createCommentDto: CreateCommentDto,
+  ) {
+    if (!payload.user) {
+      throw new BadRequestException();
+    }
     // const userId =
-    return this.commentService.create(createCommentDto, payload.user.sub);
+    return await this.commentService.create(createCommentDto, payload.user.sub);
   }
 
   @Get()
   findAll() {
     return this.commentService.findAll();
+  }
+
+  @Get('/:videoId')
+  findAllByVideoId(@Param('videoId') videoId: number) {
+    return this.commentService.findAllCommentsByVideoId(videoId);
   }
 
   @Get(':id')
